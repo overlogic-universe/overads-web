@@ -1,4 +1,3 @@
-// src/components/DashboardLayout.tsx
 "use client";
 import React from "react";
 import Image from "next/image";
@@ -11,20 +10,17 @@ export default function DashboardLayout({ children }: Props) {
   const pathname = usePathname() || "/";
 
   const nav = [
-    { title: "Dashboard", href: "/", img: "/images/dashboard.png" },
+    { title: "Dashboard", href: "/dashboard", img: "/images/dashboard.png" },
     { title: "Create", href: "/create", img: "/images/create-highlight.png" },
     { title: "Schedule", href: "/schedule", img: "/images/schedule.png" },
     { title: "Settings", href: "/settings", img: "/images/setting.png" },
   ];
 
-  // uploaded background file (local session path)
   const uploadedBg = "/public/images/background.png";
 
   return (
     <div className="min-h-screen flex bg-gradient-to-b from-white to-white">
-      {/* Sidebar */}
       <aside className="w-72 relative px-6 py-8 flex-shrink-0">
-        {/* big soft gradient / blur behind sidebar */}
         <div
           aria-hidden
           className="absolute inset-0 rounded-2xl pointer-events-none"
@@ -38,7 +34,6 @@ export default function DashboardLayout({ children }: Props) {
 
         <div className="relative z-10 flex flex-col h-full justify-between">
           <div>
-            {/* Logo (rounded white rounded square behind) */}
             <Link href="/" className="flex items-center gap-3">
               <div
                 className="rounded-2xl px-3 py-2"
@@ -83,7 +78,6 @@ export default function DashboardLayout({ children }: Props) {
             </nav>
           </div>
 
-          {/* bottom area with lamp image and profile card */}
           <div className="relative z-10">
             <div
               className="rounded-2xl p-4 mb-6 mx-auto text-center shadow-sm"
@@ -110,9 +104,7 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      {/* Main content */}
       <main className="flex-1 relative overflow-auto">
-        {/* full-area background image (uses uploaded file path) */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center"
@@ -124,7 +116,6 @@ export default function DashboardLayout({ children }: Props) {
           }}
         />
 
-        {/* decorative blobs - soft background images (using dashboard art) */}
         <div
           aria-hidden
           className="pointer-events-none absolute -top-28 -left-28 w-96 h-96 rounded-full blur-3xl opacity-80"
@@ -147,9 +138,7 @@ export default function DashboardLayout({ children }: Props) {
           }}
         />
 
-        {/* CONTENT WRAPPER: removed solid white rounded card so background is visible */}
         <div className="relative z-10 min-h-screen py-10 px-12">
-          {/* children rendered directly on top of background */}
           {children}
         </div>
       </main>

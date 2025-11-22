@@ -1,5 +1,5 @@
 import React from "react";
-import PricingCard from "./components/PricingCard";
+import PricingCard from "./components/pricing-card";
 import { MarginTopNavbar } from "@/components/ui/margin-top-navbar";
 
 const blobA = "url('/mnt/data/26222379-5cd0-4796-9cf2-ec024e31b51e.png')";
