@@ -7,7 +7,7 @@ const blobB = "url('/mnt/data/41a79742-d4ae-4bdc-b0b3-860da358471b.png')";
 
 export const Home = () => {
   return (
-    <section className="relative min-h-screen bg-white overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden">
       {/* decorative blobs */}
       <div
         aria-hidden

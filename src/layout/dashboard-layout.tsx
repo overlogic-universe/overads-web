@@ -19,7 +19,7 @@ export default function DashboardLayout({ children }: Props) {
   const uploadedBg = "/public/images/background.png";
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-b from-white to-white">
+    <div className="min-h-screen flex bg-transparent">
       <aside className="w-72 relative px-6 py-8 flex-shrink-0">
         <div
           aria-hidden
