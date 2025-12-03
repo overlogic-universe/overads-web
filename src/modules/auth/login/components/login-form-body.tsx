@@ -12,32 +12,66 @@ interface FormState {
   password: string;
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
 export default function LoginFormBody() {
-  // const { form, setForm, errors, validate } = useLoginForm();
   const router = useRouter();
-  const [form, setForm] = useState<FormState>({
-    email: "",
-    password: "",
-  });
+  const [form, setForm] = useState<FormState>({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState<string>("");
 
-  const [showLoginErrorAlert, setShowLoginErrorAlert] = useState("");
-  // const { login, loading, error } = useLogin();
-  // const handleLoginWithEmail = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setShowAlert("");
 
-  //   if (!validate()) return;
+    if (!form.email || !form.password) {
+      setShowAlert("Email dan password harus diisi.");
+      return;
+    }
 
-  //   const user = await login(form.email, form.password);
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
 
-  //   if (user) {
-  //     setShowLoginErrorAlert("");
-  //     router.push("/");
-  //   } else {
-  //     setShowLoginErrorAlert(error || "Login gagal. Harap periksa email dan password!");
-  //   }
-  // };
+      const raw = await res.text();
+      let parsed: any;
+      try { parsed = JSON.parse(raw); } catch { parsed = raw; }
+
+      if (res.status === 200) {
+       
+        if (parsed && typeof parsed === "object") {
+          const token = parsed.token ?? parsed.access_token ?? parsed.data?.token;
+          if (token) localStorage.setItem("access_token", token);
+        }
+
+        
+        router.push("/create");
+        return;
+      }
+
+      if (res.status === 401) {
+        setShowAlert(typeof parsed === "string" ? parsed : parsed?.message ?? "Kredensial tidak valid.");
+        return;
+      }
+
+      setShowAlert(typeof parsed === "string" ? parsed : parsed?.message ?? `Login gagal (status ${res.status})`);
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setShowAlert(`Terjadi kesalahan jaringan: ${err?.message ?? err}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className="space-y-3">
+    <form className="space-y-3" onSubmit={handleSubmit}>
       <AppInput
         label="Email"
         hint="contoh@gmail.com"
@@ -45,7 +79,6 @@ export default function LoginFormBody() {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setForm((prev) => ({ ...prev, email: e.target.value }))
         }
-        // error={errors.email}
       />
 
       <AppInput
@@ -56,28 +89,25 @@ export default function LoginFormBody() {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setForm((prev) => ({ ...prev, password: e.target.value }))
         }
-        // error={errors.password}
       />
 
       <AppButton
         width="100%"
         className="my-5"
         text="Login"
-        //  isLoading={loading}
+        type="submit"
+        isLoading={loading}
       />
       <p className="text-center text-sm">
         Belum punya akun?{" "}
         <span className="text-primary font-bold">
-          <Link href={"/sign-up"}>Daftar</Link>{" "}
+          <Link href={"/sign-up"}>Daftar</Link>
         </span>
       </p>
-      {showLoginErrorAlert && (
+
+      {showAlert && (
         <div className="my-5">
-          <Alert
-            variant="error"
-            title="Gagal Masuk"
-            message={showLoginErrorAlert}
-          />
+          <Alert variant="error" title="Gagal Masuk" message={showAlert} />
         </div>
       )}
     </form>
