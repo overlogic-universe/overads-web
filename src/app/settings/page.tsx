@@ -1,12 +1,11 @@
 import React from "react";
-import DashboardLayout from "@/layout/dashboard-layout";
-import CreateForm from "@/modules/dashboard/SettingsLayOut";
-
+import DashboardLayout from "@/core/layout/dashboard-layout";
+import CreateForm from "@/modules/dashboard/settings-layout";
 
 export default function Page() {
-return (
-<DashboardLayout>
-<CreateForm />
-</DashboardLayout>
-);
+  return (
+    <DashboardLayout>
+      <CreateForm />
+    </DashboardLayout>
+  );
 }

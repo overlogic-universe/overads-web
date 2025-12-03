@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Alert from "@/components/ui/alert";
-import { AppButton } from "@/components/ui/app-button";
-import { AppInput } from "@/components/ui/app-input";
+import Alert from "@/core/components/ui/alert";
+import { AppButton } from "@/core/components/ui/app-button";
+import { AppInput } from "@/core/components/ui/app-input";
 import Link from "next/link";
+import api from "@/core/lib/axios/axios-instance";
 
 interface FormState {
   email: string;
@@ -31,37 +32,47 @@ export default function LoginFormBody() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email: form.email, password: form.password }),
+      const res = await api.post("/login", {
+        email: form.email,
+        password: form.password,
       });
 
-      const raw = await res.text();
+      console.log("API URL: ", api.getUri)
+
+      const raw = await res.data;
+      console.log("RESpON LOGIN: ", res);
       let parsed: any;
-      try { parsed = JSON.parse(raw); } catch { parsed = raw; }
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        parsed = raw;
+      }
 
       if (res.status === 200) {
-       
         if (parsed && typeof parsed === "object") {
-          const token = parsed.token ?? parsed.access_token ?? parsed.data?.token;
+          const token =
+            parsed.token ?? parsed.access_token ?? parsed.data?.token;
           if (token) localStorage.setItem("access_token", token);
         }
 
-        
-        router.push("/create");
+        // router.push("/create");
         return;
       }
 
       if (res.status === 401) {
-        setShowAlert(typeof parsed === "string" ? parsed : parsed?.message ?? "Kredensial tidak valid.");
+        setShowAlert(
+          typeof parsed === "string"
+            ? parsed
+            : (parsed?.message ?? "Kredensial tidak valid."),
+        );
         return;
       }
 
-      setShowAlert(typeof parsed === "string" ? parsed : parsed?.message ?? `Login gagal (status ${res.status})`);
+      setShowAlert(
+        typeof parsed === "string"
+          ? parsed
+          : (parsed?.message ?? `Login gagal (status ${res.status})`),
+      );
     } catch (err: any) {
       console.error("Login error:", err);
       setShowAlert(`Terjadi kesalahan jaringan: ${err?.message ?? err}`);

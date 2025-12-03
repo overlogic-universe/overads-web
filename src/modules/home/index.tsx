@@ -1,6 +1,6 @@
 import React from "react";
 import PricingCard from "./components/pricing-card";
-import { MarginTopNavbar } from "@/components/ui/margin-top-navbar";
+import { MarginTopNavbar } from "@/core/components/ui/margin-top-navbar";
 
 const blobA = "url('/mnt/data/26222379-5cd0-4796-9cf2-ec024e31b51e.png')";
 const blobB = "url('/mnt/data/41a79742-d4ae-4bdc-b0b3-860da358471b.png')";
@@ -11,7 +11,7 @@ export const Home = () => {
       {/* decorative blobs */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 -left-40 w-96 h-96 rounded-full blur-[80px] opacity-70"
+        className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full opacity-70 blur-[80px]"
         style={{
           backgroundImage: blobA,
           backgroundSize: "cover",
@@ -20,7 +20,7 @@ export const Home = () => {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-40 -right-40 w-96 h-96 rounded-full blur-[80px] opacity-70"
+        className="pointer-events-none absolute -right-40 -bottom-40 h-96 w-96 rounded-full opacity-70 blur-[80px]"
         style={{
           backgroundImage: blobB,
           backgroundSize: "cover",
@@ -33,19 +33,19 @@ export const Home = () => {
 
         <div className="container mx-auto px-6 pt-16 pb-20">
           {/* Hero */}
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mt-8 text-4xl md:text-6xl font-extrabold text-[#0f1724] leading-tight">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="mt-8 text-4xl leading-tight font-extrabold text-[#0f1724] md:text-6xl">
               Your Ads, Our Threads.
             </h1>
 
-            <p className="mt-4 text-base md:text-lg text-gray-600">
-              Sistem otomatisasi untuk membantu Anda membuat dan mengelola konten
-              iklan secara efisien
+            <p className="mt-4 text-base text-gray-600 md:text-lg">
+              Sistem otomatisasi untuk membantu Anda membuat dan mengelola
+              konten iklan secara efisien
             </p>
           </div>
 
           {/* Pricing cards */}
-          <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-3 items-start">
+          <div className="mt-12 grid grid-cols-1 items-start gap-8 md:grid-cols-3">
             <PricingCard
               title="Starter"
               priceSmall="Rp 100.000"

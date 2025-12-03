@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/core/lib/utils";
 import { HTMLAttributes } from "react";
 
 interface LabelProps extends HTMLAttributes<HTMLParagraphElement> {
@@ -20,7 +20,10 @@ export const Label: React.FC<LabelProps> = ({
   };
 
   return (
-    <h3 className={cn("text-start line-clamp-2", sizeStyles[size], className)} {...props}>
+    <h3
+      className={cn("line-clamp-2 text-start", sizeStyles[size], className)}
+      {...props}
+    >
       {text}
     </h3>
   );

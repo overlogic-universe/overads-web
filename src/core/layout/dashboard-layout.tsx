@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import api from "../lib/axios/axios-instance";
 
 type Props = { children: React.ReactNode };
 
@@ -42,14 +43,21 @@ export default function DashboardLayout({ children }: Props) {
     const loadUser = async () => {
       setLoadingUser(true);
       try {
-        const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("access_token")
+            : null;
         const headers: Record<string, string> = { Accept: "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-        const res = await fetch(`${API_BASE}/api/user`, { method: "GET", headers });
-        const text = await res.text();
+        const res = await api.get(`/user`, { method: "GET", headers });
+        const text = await res.data;
         let data: any;
-        try { data = JSON.parse(text); } catch { data = text; }
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
 
         if (res.status === 200 && data && typeof data === "object") {
           setUser(data);
@@ -65,27 +73,38 @@ export default function DashboardLayout({ children }: Props) {
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("access_token")
+          : null;
       const headers: Record<string, string> = { Accept: "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const res = await fetch(`${API_BASE}/api/logout`, {
-        method: "POST",
+      const res = await api.post(`/logout`, {
         headers,
         credentials: token ? undefined : "include",
       });
 
-      const raw = await res.text();
+      const raw = await res.data;
       let parsed: any;
-      try { parsed = JSON.parse(raw); } catch { parsed = raw; }
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        parsed = raw;
+      }
 
-      if (res.ok) {
-        try { localStorage.removeItem("access_token"); } catch {}
+      if (res) {
+        try {
+          localStorage.removeItem("access_token");
+        } catch {}
         router.push("/login");
         return;
       }
 
-      const message = typeof parsed === "string" ? parsed : parsed?.message ?? `Logout failed (${res.status})`;
+      const message =
+        typeof parsed === "string"
+          ? parsed
+          : (parsed?.message ?? `Logout failed (${res})`);
       window.alert(message);
     } catch (err: any) {
       window.alert(err?.message ?? "Logout error");
@@ -100,11 +119,11 @@ export default function DashboardLayout({ children }: Props) {
   const avatarSrc = user?.avatar_url ?? "/images/avatar.png";
 
   return (
-    <div className="min-h-screen flex bg-transparent">
-      <aside className="w-72 relative px-6 py-8 flex-shrink-0">
+    <div className="flex min-h-screen bg-transparent">
+      <aside className="relative w-72 flex-shrink-0 px-6 py-8">
         <div
           aria-hidden
-          className="absolute inset-0 rounded-2xl pointer-events-none"
+          className="pointer-events-none absolute inset-0 rounded-2xl"
           style={{
             boxShadow: "inset 0 0 120px rgba(255,255,255,0.85)",
             background:
@@ -113,11 +132,20 @@ export default function DashboardLayout({ children }: Props) {
           }}
         />
 
-        <div className="relative z-10 flex flex-col h-full justify-between">
+        <div className="relative z-10 flex h-full flex-col justify-between">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <div className="rounded-2xl px-3 py-2" style={{ backgroundColor: "rgba(255,255,255,0.9)" }}>
-                <Image src="/images/overads-logo.png" alt="OverAds" width={120} height={36} priority />
+              <div
+                className="rounded-2xl px-3 py-2"
+                style={{ backgroundColor: "rgba(255,255,255,0.9)" }}
+              >
+                <Image
+                  src="/images/overads-logo.png"
+                  alt="OverAds"
+                  width={120}
+                  height={36}
+                  priority
+                />
               </div>
             </Link>
 
@@ -128,18 +156,27 @@ export default function DashboardLayout({ children }: Props) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
-                      active ? "bg-white/80 shadow-md text-blue-600" : "hover:bg-white/30 text-gray-600"
+                    className={`flex items-center gap-3 rounded-lg p-2 transition-all ${
+                      active
+                        ? "bg-white/80 text-blue-600 shadow-md"
+                        : "text-gray-600 hover:bg-white/30"
                     }`}
                     aria-current={active ? "page" : undefined}
                   >
                     <div
-                      className="w-10 h-10 rounded-md flex items-center justify-center"
+                      className="flex h-10 w-10 items-center justify-center rounded-md"
                       style={{
-                        background: active ? "linear-gradient(135deg,#EAF0FF,#FFF)" : "rgba(255,255,255,0.6)",
+                        background: active
+                          ? "linear-gradient(135deg,#EAF0FF,#FFF)"
+                          : "rgba(255,255,255,0.6)",
                       }}
                     >
-                      <Image src={item.img} alt={item.title} width={28} height={28} />
+                      <Image
+                        src={item.img}
+                        alt={item.title}
+                        width={28}
+                        height={28}
+                      />
                     </div>
                     <span className="font-medium">{item.title}</span>
                   </Link>
@@ -150,41 +187,45 @@ export default function DashboardLayout({ children }: Props) {
 
           <div className="relative z-10">
             <div
-              className="rounded-2xl p-4 mb-3 mx-auto text-center shadow-sm"
+              className="mx-auto mb-3 rounded-2xl p-4 text-center shadow-sm"
               style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
             >
-              <div className="w-28 h-28 mx-auto rounded-xl bg-white/80 flex items-center justify-center shadow-inner">
-                <Image src="/images/lamp.png" alt="lamp" width={92} height={92} />
+              <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-xl bg-white/80 shadow-inner">
+                <Image
+                  src="/images/lamp.png"
+                  alt="lamp"
+                  width={92}
+                  height={92}
+                />
               </div>
               <button
                 onClick={() => router.push("/credits")}
-                className="mt-3 w-full text-sm rounded-md px-3 py-2 bg-blue-600 text-white"
+                className="mt-3 w-full rounded-md bg-blue-600 px-3 py-2 text-sm text-white"
               >
                 More Credits
               </button>
             </div>
 
             <div className="flex items-center gap-3 px-2">
-              <div className="w-12 h-12 relative rounded-full overflow-hidden bg-white/80">
+              <div className="relative h-12 w-12 overflow-hidden rounded-full bg-white/80">
                 <Image src={avatarSrc} alt="avatar" width={48} height={48} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-semibold text-black">
-                    {loadingUser ? "Loading..." : displayName}
-                          </div>
-                      <div className="text-xs font-medium text-black">
-                          {loadingUser ? "-" : displayBusiness}
-                          </div>
-                      <div className="text-xs font-semibold text-black mt-1">
-                          {credits} Credits
-                          </div>
-
+                  {loadingUser ? "Loading..." : displayName}
+                </div>
+                <div className="text-xs font-medium text-black">
+                  {loadingUser ? "-" : displayBusiness}
+                </div>
+                <div className="mt-1 text-xs font-semibold text-black">
+                  {credits} Credits
+                </div>
               </div>
 
               <button
                 onClick={handleLogout}
                 disabled={loggingOut}
-                className="text-sm text-red-600 hover:underline px-2 py-1"
+                className="px-2 py-1 text-sm text-red-600 hover:underline"
               >
                 {loggingOut ? "Signing out..." : "Logout"}
               </button>
@@ -193,7 +234,7 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      <main className="flex-1 relative overflow-auto">
+      <main className="relative flex-1 overflow-auto">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center"
@@ -207,7 +248,7 @@ export default function DashboardLayout({ children }: Props) {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-28 -left-28 w-96 h-96 rounded-full blur-3xl opacity-80"
+          className="pointer-events-none absolute -top-28 -left-28 h-96 w-96 rounded-full opacity-80 blur-3xl"
           style={{
             backgroundImage: "url('/images/dashboard.png')",
             backgroundSize: "cover",
@@ -218,7 +259,7 @@ export default function DashboardLayout({ children }: Props) {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-28 -right-28 w-96 h-96 rounded-full blur-3xl opacity-80"
+          className="pointer-events-none absolute -right-28 -bottom-28 h-96 w-96 rounded-full opacity-80 blur-3xl"
           style={{
             backgroundImage: "url('/images/dashboard.png')",
             backgroundSize: "cover",
@@ -228,7 +269,7 @@ export default function DashboardLayout({ children }: Props) {
           }}
         />
 
-        <div className="relative z-10 min-h-screen py-10 px-12">{children}</div>
+        <div className="relative z-10 min-h-screen px-12 py-10">{children}</div>
       </main>
     </div>
   );

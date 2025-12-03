@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DockIcon, Dock } from "@/components/ui/dock";
+import { DockIcon, Dock } from "@/core/components/ui/dock";
 import Image from "next/image";
 import MenuBox from "./menu-box";
 import { LoginButton } from "@/modules/home/components/login-button";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/core/components/ui/card";
 
 const allowedPages = ["/", "/my-donations", "/about-us"];
 
@@ -29,7 +29,7 @@ const Navbar = () => {
         />
       </Card>
 
-      <Dock className="bg-white text-foreground hidden flex-row items-center space-x-16 rounded-2xl border border-gray-300 px-12 text-sm font-semibold whitespace-nowrap md:flex">
+      <Dock className="text-foreground hidden flex-row items-center space-x-16 rounded-2xl border border-gray-300 bg-white px-12 text-sm font-semibold whitespace-nowrap md:flex">
         <DockIcon className="hover:text-primary">
           <Link href="/">Home</Link>
         </DockIcon>

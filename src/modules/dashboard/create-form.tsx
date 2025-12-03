@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import api from "@/core/lib/axios/axios-instance";
 
 type User = {
   id?: string;
@@ -36,21 +37,13 @@ export default function CreateForm() {
     setLoadingUser(true);
     setUserError(null);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-      const headers: Record<string, string> = { Accept: "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-
-      const res = await fetch(`${API_BASE}/api/user`, {
-        method: "GET",
-        headers,
-       
+      const res = await api.get(`${API_BASE}/api/user`, {
       });
 
-      const raw = await res.text();
+      const raw = await res.data;
       let parsed: any;
       try { parsed = JSON.parse(raw); } catch { parsed = raw; }
-
-      if (res.ok && parsed && typeof parsed === "object") {
+      if (res.status && parsed && typeof parsed === "object") {
         setUser(parsed);
       } else {
         setUser(null);

@@ -1,5 +1,5 @@
 import React from "react";
-import GridShape from "../modules/auth/components/grid-shape";
+import GridShape from "../../modules/auth/components/grid-shape";
 import Image from "next/image";
 
 export default function AuthLayout({
@@ -8,7 +8,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-transparent relative container mx-auto flex min-h-screen w-[90%] flex-col items-center justify-center gap-10 md:w-[80%] lg:flex-row">
+    <div className="relative container mx-auto flex min-h-screen w-[90%] flex-col items-center justify-center gap-10 bg-transparent md:w-[80%] lg:flex-row">
       <div className="flex w-full items-center justify-center lg:w-1/2">
         {children}
       </div>
