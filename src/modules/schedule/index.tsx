@@ -1,0 +1,164 @@
+"use client";
+
+import React, { useMemo, useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import {
+  CalendarDays,
+  Clock,
+  Plus,
+  Edit,
+  Trash2,
+  Globe,
+  Instagram,
+  Facebook,
+  Eye,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAdSchedules } from "./hooks/use-ad-schedules";
+import CircularLoading from "@/core/components/ui/circular-loading";
+import { formatDate, formatTime } from "@/core/utils/date";
+
+/**
+ * NOTE:
+ * - Saya menggunakan file gambar yang kamu upload sebagai header/bg.
+ *   Path lokal (yang akan kamu transform ke URL di environment) :
+ *   /mnt/data/Screenshot 2025-11-24 154002.png
+ */
+
+const headerBg = "/mnt/data/Screenshot 2025-11-24 154002.png";
+
+type ScheduleItem = {
+  id: string;
+  date: string; // ISO date string
+  time: string; // display time
+  platform: "instagram" | "facebook" | "all";
+};
+
+export default function SchedulePage() {
+  const { schedules, loading, error } = useAdSchedules();
+
+  const formatDateDisplay = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+
+  return (
+    <div
+      className="min-h-screen w-full p-6"
+      // headerBg dipakai sebagai subtle background di area atas untuk nuansa seperti screenshot
+      style={{
+        backgroundImage: `linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.98) 40%), url(${headerBg})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "left top",
+      }}
+    >
+      <div className="flex gap-6">
+        {/* RIGHT - Main content */}
+        <div className="flex-1">
+          {/* Header Title + Add button (right) */}
+          <div className="mb-4 flex items-center justify-between">
+            <h1 className="text-2xl font-semibold">Daftar Jadwal</h1>
+
+            {/* Another Add button (like top-right in screenshot) */}
+            <button
+              // onClick={goToCreate}
+              className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#6C64FF] px-4 py-2 text-white shadow-md hover:bg-[#5b52ff]"
+            >
+              <Plus size={16} /> Buat Jadwal
+            </button>
+          </div>
+
+          {loading && <CircularLoading />}
+
+          {error && (
+            <div className="py-6 text-center text-sm text-red-500">{error}</div>
+          )}
+          {/* Table Card */}
+          {schedules.map((item) => {
+            // const active = selectedRows[item.id];
+
+            return (
+              <div
+                key={item.id}
+                className={`my-1 grid grid-cols-12 items-center gap-4 rounded-lg border border-gray-300 bg-white px-3 py-3 transition-shadow`}
+              >
+                {/* Date */}
+                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
+                  <CalendarDays size={16} />
+                  <span className="font-medium">
+                    {formatDate(item.scheduled_at)}
+                  </span>
+                </div>
+
+                {/* Time */}
+                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
+                  <Clock size={16} />
+                  <span>{formatTime(item.scheduled_at)} WIB</span>
+                </div>
+
+                {/* Platform */}
+                <div className="col-span-3">
+                  <PlatformBadge platform={item.platform as any} />
+                </div>
+
+                {/* Name */}
+                <div className="col-span-3">
+                  <p className="line-clamp-1 text-sm font-medium text-gray-800">
+                    {item.ad?.name ?? "-"}
+                  </p>
+                  <p className="line-clamp-1 text-xs text-gray-500">
+                    {item.ad?.description ?? "-"}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="col-span-2 flex items-center justify-end gap-3">
+                  <button
+                    title="Detail"
+                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-yellow-50 transition hover:scale-105"
+                  >
+                    <Eye size={16} className="text-yellow-600" />
+                  </button>
+
+                  <button
+                    title="Hapus"
+                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-red-50 transition hover:scale-105"
+                  >
+                    <Trash2 size={16} className="text-red-600" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Small helper to render badge with icon */
+function PlatformBadge({ platform }: { platform: ScheduleItem["platform"] }) {
+  const common =
+    "inline-flex items-center gap-2 px-4 py-1 rounded-full text-xs font-medium";
+  if (platform === "instagram")
+    return (
+      <span className={`${common} bg-indigo-50 text-indigo-700`}>
+        <Instagram size={14} /> Instagram
+      </span>
+    );
+  if (platform === "facebook")
+    return (
+      <span className={`${common} bg-blue-50 text-blue-600`}>
+        <Facebook size={14} /> Facebook
+      </span>
+    );
+  return (
+    <span className={`${common} bg-purple-50 text-purple-700`}>
+      <Globe size={14} /> All Platform
+    </span>
+  );
+}

@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import api from "../lib/axios/axios-instance";
+import { useGetCurrentUser } from "../providers/get-current-user-provider";
+import { logout } from "@/modules/auth/services/logout";
 
 type Props = { children: React.ReactNode };
 
@@ -24,11 +26,10 @@ type User = {
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 export default function DashboardLayout({ children }: Props) {
+  const { user, loading: loadingUser } = useGetCurrentUser();
   const pathname = usePathname() || "/";
   const router = useRouter();
 
-  const [user, setUser] = useState<User | null>(null);
-  const [loadingUser, setLoadingUser] = useState(true);
   const [credits, setCredits] = useState<number>(13);
   const [loggingOut, setLoggingOut] = useState<boolean>(false);
 
@@ -38,80 +39,6 @@ export default function DashboardLayout({ children }: Props) {
     { title: "Schedule", href: "/schedule", img: "/images/schedule.png" },
     { title: "Settings", href: "/settings", img: "/images/setting.png" },
   ];
-
-  useEffect(() => {
-    const loadUser = async () => {
-      setLoadingUser(true);
-      try {
-        const token =
-          typeof window !== "undefined"
-            ? localStorage.getItem("access_token")
-            : null;
-        const headers: Record<string, string> = { Accept: "application/json" };
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-
-        const res = await api.get(`/user`, { method: "GET", headers });
-        const text = await res.data;
-        let data: any;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
-
-        if (res.status === 200 && data && typeof data === "object") {
-          setUser(data);
-          if (typeof data.credits === "number") setCredits(data.credits);
-        }
-      } catch {}
-      setLoadingUser(false);
-    };
-    loadUser();
-  }, []);
-
-  const handleLogout = async () => {
-    if (loggingOut) return;
-    setLoggingOut(true);
-    try {
-      const token =
-        typeof window !== "undefined"
-          ? localStorage.getItem("access_token")
-          : null;
-      const headers: Record<string, string> = { Accept: "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-
-      const res = await api.post(`/logout`, {
-        headers,
-        credentials: token ? undefined : "include",
-      });
-
-      const raw = await res.data;
-      let parsed: any;
-      try {
-        parsed = JSON.parse(raw);
-      } catch {
-        parsed = raw;
-      }
-
-      if (res) {
-        try {
-          localStorage.removeItem("access_token");
-        } catch {}
-        router.push("/login");
-        return;
-      }
-
-      const message =
-        typeof parsed === "string"
-          ? parsed
-          : (parsed?.message ?? `Logout failed (${res})`);
-      window.alert(message);
-    } catch (err: any) {
-      window.alert(err?.message ?? "Logout error");
-    } finally {
-      setLoggingOut(false);
-    }
-  };
 
   const uploadedBg = "/images/background.png";
   const displayName = user?.full_name ?? "Timothy Maulana";
@@ -186,26 +113,6 @@ export default function DashboardLayout({ children }: Props) {
           </div>
 
           <div className="relative z-10">
-            <div
-              className="mx-auto mb-3 rounded-2xl p-4 text-center shadow-sm"
-              style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
-            >
-              <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-xl bg-white/80 shadow-inner">
-                <Image
-                  src="/images/lamp.png"
-                  alt="lamp"
-                  width={92}
-                  height={92}
-                />
-              </div>
-              <button
-                onClick={() => router.push("/credits")}
-                className="mt-3 w-full rounded-md bg-blue-600 px-3 py-2 text-sm text-white"
-              >
-                More Credits
-              </button>
-            </div>
-
             <div className="flex items-center gap-3 px-2">
               <div className="relative h-12 w-12 overflow-hidden rounded-full bg-white/80">
                 <Image src={avatarSrc} alt="avatar" width={48} height={48} />
@@ -223,8 +130,9 @@ export default function DashboardLayout({ children }: Props) {
               </div>
 
               <button
-                onClick={handleLogout}
-                disabled={loggingOut}
+                onClick={() => {
+                  logout();
+                }}
                 className="px-2 py-1 text-sm text-red-600 hover:underline"
               >
                 {loggingOut ? "Signing out..." : "Logout"}
@@ -271,7 +179,9 @@ export default function DashboardLayout({ children }: Props) {
 
         {/* scroll area */}
         <div className="h-screen overflow-y-auto">
-          <div className="mx-auto w-full max-w-7xl ps-[w-72] px-6 py-8">{children}</div>
+          <div className="mx-auto w-full max-w-7xl px-6 py-8 ps-[w-72]">
+            {children}
+          </div>
         </div>
       </main>
     </div>
