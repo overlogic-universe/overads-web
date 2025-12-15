@@ -14,18 +14,15 @@ console.log("process.env.API_URL: ",process.env.NEXT_PUBLIC_API_URL )
 
 // Request Interceptor
 api.interceptors.request.use(
-  async (config) => {
-    let token: string | null = null;
-
+  (config) => {
     if (typeof window !== "undefined") {
-      token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Jika ingin menambah header lain secara global
     config.headers["Cache-Control"] = "no-cache";
     config.headers.Pragma = "no-cache";
 
@@ -33,6 +30,7 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
 
 // Response Interceptor
 api.interceptors.response.use(

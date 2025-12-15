@@ -33,40 +33,6 @@ export default function CreateForm() {
   const [userError, setUserError] = useState<string | null>(null);
 
 
-  const fetchUser = useCallback(async () => {
-    setLoadingUser(true);
-    setUserError(null);
-    try {
-      const res = await api.get(`${API_BASE}/api/user`, {
-      });
-
-      const raw = await res.data;
-      let parsed: any;
-      try { parsed = JSON.parse(raw); } catch { parsed = raw; }
-      if (res.status && parsed && typeof parsed === "object") {
-        setUser(parsed);
-      } else {
-        setUser(null);
-        setUserError(typeof parsed === "string" ? parsed : parsed?.message ?? `Status ${res.status}`);
-      }
-    } catch (err: any) {
-      setUser(null);
-      setUserError(err?.message ?? String(err));
-    } finally {
-      setLoadingUser(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-
-  const refreshUser = async () => {
-    await fetchUser();
-  };
-
-
   const onFilesAdded = useCallback((incoming: FileList | File[]) => {
     const arr = Array.from(incoming);
     const images = arr.filter((f) => f.type.startsWith("image/"));
@@ -277,8 +243,6 @@ Gunakan teks otomatis: ${useAutoText ? "Ya" : "Tidak"}`
               type="button"
               onClick={async () => {
                 
-                await refreshUser();
-                alert("Refresh user dipanggil (demo).");
               }}
               className="px-3 py-2 rounded-md bg-blue-50 text-blue-600 text-sm"
             >
