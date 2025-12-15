@@ -6,7 +6,6 @@ const PROTECTED_PAGES = ["/create", "/dashboard"];
 
 export function proxy(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
-  console.log("TOKENN :", token)
   const { pathname } = request.nextUrl;
 
   // sudah login tapi buka halaman auth

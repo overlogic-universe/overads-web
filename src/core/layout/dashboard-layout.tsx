@@ -234,7 +234,7 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      <main className="relative flex-1 overflow-auto">
+      <main className="relative flex-1 overflow-hidden">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center"
@@ -269,7 +269,10 @@ export default function DashboardLayout({ children }: Props) {
           }}
         />
 
-        <div className="relative z-10 min-h-screen px-12 py-10">{children}</div>
+        {/* scroll area */}
+        <div className="h-screen overflow-y-auto">
+          <div className="mx-auto w-full max-w-7xl ps-[w-72] px-6 py-8">{children}</div>
+        </div>
       </main>
     </div>
   );
