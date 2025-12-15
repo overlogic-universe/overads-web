@@ -22,7 +22,7 @@ const PricingCard: React.FC<Props> = ({
     <div
       className={`relative rounded-2xl p-6 md:p-8 shadow-md border h-full flex flex-col ${
         highlight
-          ? "bg-gradient-to-b from-[#0d4fa6] to-[#083a7f] text-white border-transparent shadow-2xl"
+          ? "bg-linear-to-b from-[#0d4fa6] to-[#02214c] text-white border-transparent shadow-2xl"
           : "bg-white/90 border-gray-200"
       }`}
     >
@@ -31,7 +31,7 @@ const PricingCard: React.FC<Props> = ({
         <h3
           className={`text-lg font-semibold ${
             title === "Starter" || title === "Pro"
-              ? "text-blue-600"
+              ? "text-blue-500"
               : highlight
               ? "text-white"
               : "text-gray-900"
@@ -78,10 +78,10 @@ const PricingCard: React.FC<Props> = ({
         }`}
       >
         {points.map((p, i) => (
-          <li key={i} className="flex items-start gap-3">
+          <li key={i} className="flex items-center gap-3">
             <span
               className={`mt-1 text-sm ${
-                highlight ? "text-white" : "text-green-600"
+                highlight ? "text-white" : "text-green-400"
               }`}
             >
               ✔
@@ -98,7 +98,7 @@ const PricingCard: React.FC<Props> = ({
           className={`block w-full rounded-lg px-4 py-3 font-medium text-center transition-shadow ${
             highlight
               ? "bg-white/10 hover:bg-white/20 ring-1 ring-white/20"
-              : "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-blue-500 text-white hover:bg-blue-600"
           }`}
         >
           {cta}
