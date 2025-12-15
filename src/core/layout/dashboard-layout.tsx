@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: Props) {
                 onClick={() => {
                   logout();
                 }}
-                className="px-2 py-1 text-sm text-red-600 hover:underline"
+                className="px-2 cursor-pointer py-1 text-sm text-red-600 hover:underline"
               >
                 {loggingOut ? "Signing out..." : "Logout"}
               </button>
