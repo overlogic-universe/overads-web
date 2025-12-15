@@ -1,7 +1,5 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import {
   CalendarDays,
@@ -14,10 +12,12 @@ import {
   Facebook,
   Eye,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useAdSchedules } from "./hooks/use-ad-schedules";
 import CircularLoading from "@/core/components/ui/circular-loading";
 import { formatDate, formatTime } from "@/core/utils/date";
+import { useAdSchedules } from "./providers/ad-schedules-provider";
+import { ScheduleAdModal } from "./components/create-schedule-modal";
+import { useScheduleAdModal } from "./hooks/use-schedule-ad-modal";
+import { useAds } from "./providers/ads-provider";
 
 /**
  * NOTE:
@@ -37,13 +37,22 @@ type ScheduleItem = {
 
 export default function SchedulePage() {
   const { schedules, loading, error } = useAdSchedules();
+  const { ads, loading: adsLoading } = useAds();
 
-  const formatDateDisplay = (iso: string) =>
-    new Date(iso).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+  const adOptions = ads.map((ad) => ({
+    id: ad.id,
+    title: ad.name,
+  }));
+
+  const {
+    isOpen,
+    open,
+    close,
+    selectedAdId,
+    setSelectedAdId,
+    scheduleAt,
+    setScheduleAt,
+  } = useScheduleAdModal();
 
   return (
     <div
@@ -56,6 +65,16 @@ export default function SchedulePage() {
         backgroundPosition: "left top",
       }}
     >
+      <ScheduleAdModal
+        isOpen={isOpen}
+        onClose={close}
+        ads={adOptions}
+        selectedAdId={selectedAdId}
+        onChangeAd={setSelectedAdId}
+        scheduleAt={scheduleAt}
+        onChangeSchedule={setScheduleAt}
+      />
+
       <div className="flex gap-6">
         {/* RIGHT - Main content */}
         <div className="flex-1">
@@ -65,7 +84,7 @@ export default function SchedulePage() {
 
             {/* Another Add button (like top-right in screenshot) */}
             <button
-              // onClick={goToCreate}
+              onClick={open}
               className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#6C64FF] px-4 py-2 text-white shadow-md hover:bg-[#5b52ff]"
             >
               <Plus size={16} /> Buat Jadwal

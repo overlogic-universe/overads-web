@@ -1,7 +1,10 @@
 import { Modal } from "@/core/components/modal/modal";
 import { AppButton } from "@/core/components/ui/app-button";
-import { AdOption } from "../hooks/use-ad-option";
 
+export interface AdOption {
+  id: number;
+  title: string;
+}
 
 interface ScheduleAdModalProps {
   isOpen: boolean;

@@ -62,3 +62,21 @@ export interface GetAdSchedulesResponse {
   to: number;
   total: number;
 }
+
+export interface GetAdsResponse {
+  current_page: number;
+  data: Ad[];
+
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+
+  next_page_url: string | null;
+  prev_page_url: string | null;
+
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
+}
