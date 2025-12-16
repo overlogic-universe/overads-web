@@ -1,10 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { LogOutIcon } from "lucide-react";
+import { logout } from "@/modules/auth/services/logout";
+
+const ACCESS_TOKEN_KEY = "access_token";
 
 export const LoginButton = () => {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
+  // cek login hanya di client
+  useEffect(() => {
+    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+    setIsLoggedIn(!!token);
+  }, []);
+
+  // biar tidak flicker
+  if (isLoggedIn === null) return null;
+
+  // JIKA SUDAH LOGIN → LOGOUT
+  if (isLoggedIn) {
+    return (
+      <button
+        onClick={() => {
+          logout();
+        }}
+        className="text-background mx-0 hidden h-12 cursor-pointer items-center justify-center space-x-2 rounded-2xl border border-gray-300 bg-linear-to-tl from-red-700 to-red-400 px-7 transition-colors duration-300 hover:from-red-400 hover:to-red-700 md:flex"
+      >
+        <p className="text-sm font-medium">Logout</p>
+        <LogOutIcon className="h-4 w-4" />
+      </button>
+    );
+  }
+
+  // JIKA BELUM LOGIN → LOGIN
   return (
     <button
       onClick={() => router.push("/login")}

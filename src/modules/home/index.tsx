@@ -1,33 +1,45 @@
-import React from "react";
+"use client";
+
+import { useState } from "react";
 import PricingCard from "./components/pricing-card";
 import { MarginTopNavbar } from "@/core/components/ui/margin-top-navbar";
-
-const blobA = "url('/mnt/data/26222379-5cd0-4796-9cf2-ec024e31b51e.png')";
-const blobB = "url('/mnt/data/41a79742-d4ae-4bdc-b0b3-860da358471b.png')";
+import { usePackages } from "./hooks/use-get-packages";
+import { ModalLoading } from "@/core/components/modal/modal-loading";
+import { ModalConfirm } from "@/core/components/modal/modal-confirm";
+import { formatRupiah } from "@/core/utils/currency";
+import { usePayment } from "../payment/hooks/use-payment";
 
 export const Home = () => {
+  const { data, loading } = usePackages();
+  const { createInvoice, loading: paying } = usePayment();
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
+
+  const openConfirm = (id: number, name: string) => {
+    setSelectedPackage({ id, name });
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmBuy = async () => {
+    if (!selectedPackage) return;
+
+    const res = await createInvoice({
+      package_id: selectedPackage.id,
+      success_redirect_url: `${window.location.origin}/create`,
+      failure_redirect_url: `${window.location.origin}/`,
+    });
+
+    window.location.href = res.invoice_url;
+  };
+
+  if (loading || paying) return <ModalLoading isOpen />;
+
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* decorative blobs */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full opacity-70 blur-[80px]"
-        style={{
-          backgroundImage: blobA,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-40 -bottom-40 h-96 w-96 rounded-full opacity-70 blur-[80px]"
-        style={{
-          backgroundImage: blobB,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-
       <div className="relative z-10">
         <MarginTopNavbar />
 
@@ -43,55 +55,34 @@ export const Home = () => {
               konten iklan secara efisien
             </p>
           </div>
-
-          {/* Pricing cards */}
-          <div className="mt-12 grid grid-cols-1 items-start gap-8 md:grid-cols-3">
-            <PricingCard
-              title="Starter"
-              priceSmall="Rp 100.000"
-              priceBig="Rp 50.000"
-              points={[
-                "5 kredit, Generate konten hingga 5 kali",
-                "1 platform (Facebook atau Instagram)",
-                "Template dasar (teks & gambar)",
-                "+1 kredit gratis untuk pengguna baru",
-              ]}
-              cta="Pesan Sekarang"
-            />
-
-            <PricingCard
-              title="Business"
-              highlight
-              priceSmall="Rp 350.000"
-              priceBig="Rp 180.000"
-              points={[
-                "20 kredit, pembuatan konten otomatis hingga 20 kali",
-                "Integrasi penuh dengan Facebook & Instagram",
-                "Template kustom dan variasi konten AI yang lebih personal",
-                "Fitur penjadwalan otomatis & analitik performa dasar",
-                "Dukungan pelanggan premium via chat",
-                "+3 kredit gratis untuk pengguna baru",
-              ]}
-              cta="Pesan Sekarang"
-            />
-
-            <PricingCard
-              title="Pro"
-              priceSmall="Rp 200.000"
-              priceBig="Rp 100.000"
-              points={[
-                "10 kredit, Generate konten hingga 10 kali",
-                "2 platform (Facebook & Instagram)",
-                "Template premium yang bisa disesuaikan oleh AI",
-                "Penjadwalan otomatis unggahan konten",
-                "Dukungan pelanggan prioritas via chat",
-                "+2 kredit gratis untuk pengguna baru",
-              ]}
-              cta="Pesan Sekarang"
-            />
+          <div className="mt-12 grid grid-cols-1 items-start gap-4 rounded-2xl border border-white p-4 md:grid-cols-3">
+            {data.map((item) => (
+              <PricingCard
+                key={item.id}
+                highlight={item.name === "Business"}
+                title={item.name}
+                priceSmall={formatRupiah(item.original_price)}
+                priceBig={formatRupiah(item.price)}
+                points={item.benefits}
+                cta="Pesan Sekarang"
+                onBuy={() => openConfirm(item.id, item.name)}
+              />
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Modal Confirm */}
+      <ModalConfirm
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmBuy}
+        title="Konfirmasi Pembelian Paket"
+        description={`Apakah Anda yakin ingin melanjutkan pembelian paket <b>${selectedPackage?.name}</b>?<br/><br/>
+        Setelah pembayaran berhasil, kredit akan langsung ditambahkan ke akun Anda dan dapat segera digunakan.`}
+        confirmText="Lanjutkan Pembayaran"
+        cancelText="Batalkan"
+      />
     </section>
   );
 };

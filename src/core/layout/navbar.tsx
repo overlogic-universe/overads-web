@@ -31,14 +31,14 @@ const Navbar = () => {
 
       <Dock className="text-foreground hidden flex-row items-center space-x-16 rounded-2xl border border-gray-300 bg-white px-12 text-sm font-semibold whitespace-nowrap md:flex">
         <DockIcon className="hover:text-primary">
-          <Link href="/">Home</Link>
+          <Link href="/">Beli Paket</Link>
         </DockIcon>
         <DockIcon className="hover:text-primary">
-          <Link href="/">Pricing</Link>
+          <Link href="/create">Buat Konten</Link>
         </DockIcon>
-        <DockIcon className="hover:text-primary">
+        {/* <DockIcon className="hover:text-primary">
           <Link href="/">Company</Link>
-        </DockIcon>
+        </DockIcon> */}
       </Dock>
 
       <LoginButton />
