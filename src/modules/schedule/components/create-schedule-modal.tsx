@@ -71,7 +71,7 @@ export const ScheduleAdModal = ({
       />
 
       <Modal isOpen={isOpen} onClose={onClose}>
-        {!userLoading && user ? (
+        {!userLoading && user?.credit && user.credit < 0 ? (
           <Title
             className="text-center text-red-500"
             text="*Anda harus memiliki minimal 1 kredit untuk mengunggah iklan Anda"

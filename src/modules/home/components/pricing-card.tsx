@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 interface Props {
+  onBuy: () => void;
   title: string;
   priceSmall?: string;
   priceBig: string;
@@ -15,26 +16,27 @@ const PricingCard: React.FC<Props> = ({
   priceSmall,
   priceBig,
   points,
+  onBuy,
   cta = "Pilih",
   highlight = false,
 }) => {
   return (
     <div
-      className={`relative rounded-2xl p-6 md:p-8 shadow-md border h-full flex flex-col ${
+      className={`relative flex h-full flex-col rounded-2xl border p-6 shadow-md md:p-8 ${
         highlight
-          ? "bg-linear-to-b from-[#0d4fa6] to-[#02214c] text-white border-transparent shadow-2xl"
-          : "bg-white/90 border-gray-200"
+          ? "border-transparent bg-linear-to-b from-[#0d4fa6] to-[#02214c] text-white shadow-2xl"
+          : "border-gray-200 bg-white/90"
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <h3
           className={`text-lg font-semibold ${
             title === "Starter" || title === "Pro"
               ? "text-blue-500"
               : highlight
-              ? "text-white"
-              : "text-gray-900"
+                ? "text-white"
+                : "text-gray-900"
           }`}
         >
           {title}
@@ -63,7 +65,7 @@ const PricingCard: React.FC<Props> = ({
           {priceBig}
         </div>
         <div
-          className={`text-sm mt-1 ${
+          className={`mt-1 text-sm ${
             highlight ? "text-white/80" : "text-gray-500"
           }`}
         >
@@ -73,7 +75,7 @@ const PricingCard: React.FC<Props> = ({
 
       {/* Features */}
       <ul
-        className={`space-y-3 mb-6 ${
+        className={`mb-6 space-y-3 ${
           highlight ? "text-white/90" : "text-gray-700"
         }`}
       >
@@ -93,16 +95,16 @@ const PricingCard: React.FC<Props> = ({
 
       {/* CTA Button (Link) */}
       <div className="mt-auto pt-6">
-        <Link
-          href="/create"
-          className={`block w-full rounded-lg px-4 py-3 font-medium text-center transition-shadow ${
+        <button
+          onClick={onBuy}
+          className={`block w-full cursor-pointer rounded-lg px-4 py-3 text-center font-medium transition-shadow ${
             highlight
-              ? "bg-white/10 hover:bg-white/20 ring-1 ring-white/20"
+              ? "bg-white/10 ring-1 ring-white/20 hover:bg-white/20"
               : "bg-blue-500 text-white hover:bg-blue-600"
           }`}
         >
           {cta}
-        </Link>
+        </button>
       </div>
     </div>
   );

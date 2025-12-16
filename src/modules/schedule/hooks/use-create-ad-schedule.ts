@@ -12,10 +12,15 @@ export const useCreateAdSchedule = () => {
     setLoading(true);
     setError(null);
     try {
+  console.log("PAYLOAD RES CREATE SHCEDULE: ", payload)
+
       const res = await createAdSchedule(adId, payload);
       setData(res);
-      return res;
-    } catch (err: any) {
+  console.log("RES CREATE SHCEDULE: ", res)
+  
+  return res;
+} catch (err: any) {
+      console.log("RES CREATE SHCEDULE ERRORR: ", err)
       setError(err?.message ?? "Gagal menjadwalkan iklan");
       throw err;
     } finally {
