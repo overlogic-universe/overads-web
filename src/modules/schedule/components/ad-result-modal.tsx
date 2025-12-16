@@ -1,7 +1,9 @@
 import { Modal } from "@/core/components/modal/modal";
 import { Title } from "@/core/components/text/title";
+import CircularLoading from "@/core/components/ui/circular-loading";
 import { cn } from "@/core/lib/utils";
 import { AdSchedule } from "@/core/types/ad";
+import { useInstagramAccount } from "@/modules/account/providers/instagram-account-provider";
 import { Bookmark, Heart, MessageCircle, Send } from "lucide-react";
 import Image from "next/image";
 
@@ -17,6 +19,7 @@ export const AdResultModal = ({
   selectedSchedule,
 }: AdResultModalProps) => {
   if (!selectedSchedule) return null;
+  const { account, loading, error } = useInstagramAccount();
 
   const { ad } = selectedSchedule;
   const status = selectedSchedule.generation?.status;
@@ -60,19 +63,21 @@ export const AdResultModal = ({
             <div></div>
           </div>
           <div className="flex flex-1 flex-col justify-between space-y-5">
-            <div className="flex items-center space-x-2">
-              <Image
-                height={60}
-                width={60}
-                alt={`${ad.name}-generated-image`}
-                src={
-                  // selectedSchedule.generation?.result_media ??
-                  "/images/example-preview.png"
-                }
-                className="h-14 w-14 rounded-full object-cover"
-              />
-              <Title text="Timoty Maulana" />
-            </div>
+            {loading && <CircularLoading />}
+            {!loading && !error && account && (
+              <div className="flex items-center space-x-2">
+                <Image
+                  height={60}
+                  width={60}
+                  alt={`${account.name}-generated-image`}
+                  src={
+                    account.profile_picture_url ?? "/images/example-preview.png"
+                  }
+                  className="h-14 w-14 rounded-full object-cover"
+                />
+                <Title text={account.name ?? "-"} />
+              </div>
+            )}
             <p>
               🐼✨ EXCLUSIVE OFFER – ACTION FIGURE PANDA! ✨🐼 💥 Hadir dalam
               battle mode paling epik! Si Panda siap menggetarkan rak koleksi
