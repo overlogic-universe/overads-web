@@ -46,7 +46,7 @@ export default function CreateForm() {
 
     console.log("")
 
-    if (!title || !platform) {
+    if (!title) {
       setModalSuccess(false);
       setModalMessage("Nama produk dan platform wajib diisi.");
       setModalOpen(true);
@@ -64,7 +64,7 @@ export default function CreateForm() {
       });
 
       setModalSuccess(true);
-      setModalMessage("Iklan berhasil dibuat 🎉<br/>Silakan cek di dashboard.");
+      setModalMessage("Iklan berhasil dibuat 🎉<br/>Silakan unggah iklannya.");
       setModalOpen(true);
     } catch (err: any) {
       setModalSuccess(false);

@@ -21,11 +21,14 @@ import { useState } from "react";
 import { AdSchedule } from "@/core/types/ad";
 import { AdResultModal } from "./components/ad-result-modal";
 import { useGetCurrentUser } from "@/core/providers/get-current-user-provider";
+import { useAutoRefreshAdSchedules } from "./hooks/use-auth-refresh";
 
 export default function SchedulePage() {
   const { schedules, loading, error } = useAdSchedules();
   const { user, loading: userLoading } = useGetCurrentUser();
   const { ads } = useAds();
+
+  useAutoRefreshAdSchedules(5000);
 
   const adOptions = ads.map((ad) => ({
     id: ad.id,
@@ -59,12 +62,20 @@ export default function SchedulePage() {
       text: "text-yellow-600",
     },
     processing: {
+      bg: "bg-yellow-50",
+      text: "text-yellow-600",
+    },
+    generated: {
       bg: "bg-blue-50",
       text: "text-blue-600",
     },
-    generated: {
+    uploaded: {
       bg: "bg-green-50",
       text: "text-green-600",
+    },
+    failed: {
+      bg: "bg-red-50",
+      text: "text-red-600",
     },
   };
 

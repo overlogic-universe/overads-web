@@ -19,18 +19,27 @@ export const AdResultModal = ({
   if (!selectedSchedule) return null;
 
   const { ad } = selectedSchedule;
-  const isPending = selectedSchedule.generation?.status === "pending";
+  const status = selectedSchedule.generation?.status;
+  const isFailed = status === "failed";
+  const isPending = status === "pending" || status === "processing";
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      className={cn(isPending ? "w-fit!" : "min-h-[90%] min-w-[80%]!")}
+      className={cn(
+        isPending || isFailed ? "w-fit!" : "min-h-[90%] min-w-[80%]!",
+      )}
     >
       {isPending ? (
         <Title
           className="text-center"
           text="Sedang diproses, mohon ditunggu sebentar.."
+        />
+      ) : isFailed ? (
+        <Title
+          className="text-center text-red-500"
+          text="Anda gagal mengunggah iklan Anda. Mohon coba lagi!"
         />
       ) : (
         <div className="flex justify-between space-x-10">
@@ -41,7 +50,10 @@ export const AdResultModal = ({
                 width={640} // lebar tetap, bisa disesuaikan
                 height={360}
                 alt={`${ad.name}-generated-image`}
-                src="/images/example-preview.png"
+                src={
+                  selectedSchedule.generation?.result_media ??
+                  "/images/example-preview.png"
+                }
                 className="h-full w-full object-contain"
               />
             </div>

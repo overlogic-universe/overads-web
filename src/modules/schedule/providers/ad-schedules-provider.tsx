@@ -21,6 +21,7 @@ interface AdSchedulesContextValue {
   setPage: (page: number) => void;
 
   refetch: (page?: number) => Promise<void>;
+  refresh: (opts?: { silent?: boolean }) => Promise<void>;
 }
 
 const AdSchedulesContext = createContext<AdSchedulesContextValue | undefined>(
@@ -33,37 +34,52 @@ export const AdSchedulesProvider = ({
   children: React.ReactNode;
 }) => {
   const [schedules, setSchedules] = useState<AdSchedule[]>([]);
-  const [pagination, setPagination] =
-    useState<GetAdSchedulesResponse | null>(null);
+  const [pagination, setPagination] = useState<GetAdSchedulesResponse | null>(
+    null,
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
-  const fetchAdSchedules = useCallback(async (pageNumber = 1) => {
-    setLoading(true);
-    setError(null);
+  // 🔁 Silent / normal refresh
+  const refresh = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!silent) setLoading(true);
+      setError(null);
 
-    try {
-      const res = await getAdSchedules();
+      try {
+        const res = await getAdSchedules();
 
-      // urutkan terbaru dulu (scheduled_at DESC)
-      const sorted = [...res.data].sort(
-        (a, b) =>
-          new Date(b.scheduled_at).getTime() -
-          new Date(a.scheduled_at).getTime(),
-      );
+        const sorted = [...res.data].sort(
+          (a, b) =>
+            new Date(a.scheduled_at).getTime() -
+            new Date(b.scheduled_at).getTime(),
+        );
 
-      setSchedules(sorted);
-      setPagination(res);
+        setSchedules(sorted);
+        setPagination(res);
+      } catch (err: any) {
+        if (!silent) {
+          setError(err?.message ?? "Gagal mengambil jadwal iklan");
+        }
+      } finally {
+        if (!silent) setLoading(false);
+      }
+    },
+    [],
+  );
+
+  // Manual refetch (pagination / action user)
+  const fetchAdSchedules = useCallback(
+    async (pageNumber = 1) => {
+      await refresh({ silent: false });
       setPage(pageNumber);
-    } catch (err: any) {
-      setError(err?.message ?? "Gagal mengambil jadwal iklan");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [refresh],
+  );
 
+  // First load
   useEffect(() => {
     fetchAdSchedules(1);
   }, [fetchAdSchedules]);
@@ -78,6 +94,7 @@ export const AdSchedulesProvider = ({
         page,
         setPage,
         refetch: fetchAdSchedules,
+        refresh, // ⬅️ penting
       }}
     >
       {children}

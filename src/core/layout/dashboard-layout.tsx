@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }: Props) {
 
   return (
     <div className="flex min-h-screen bg-transparent">
-      <aside className="relative w-72 flex-shrink-0 bg-white px-6 py-8">
+      <aside className="relative w-72 shrink-0 px-6 py-8">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-2xl"

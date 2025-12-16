@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useApiKeyContext } from "@/modules/settings/providers/api-key-provider";
 import { useGetCurrentUser } from "@/core/providers/get-current-user-provider";
 import { Title } from "@/core/components/text/title";
+import { toWIBISOString } from "@/core/utils/date";
 
 export interface AdOption {
   id: number;
@@ -46,12 +47,16 @@ export const ScheduleAdModal = ({
   const handleSave = async () => {
     if (!selectedAdId || !scheduleAt) return;
 
+    const scheduledAtWIB = toWIBISOString(scheduleAt);
+
     try {
-      await mutate(selectedAdId, { scheduled_at: scheduleAt });
+      await mutate(selectedAdId, {
+        scheduled_at: scheduledAtWIB,
+      });
       setInfoMessage("Berhasil menambahkan jadwal iklan");
       setInfoSuccess(true);
       setInfoOpen(true);
-      onClose(); // close modal after success
+      onClose();
     } catch (err: any) {
       setInfoMessage(err?.message || "Gagal menjadwalkan iklan");
       setInfoSuccess(false);
