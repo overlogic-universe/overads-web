@@ -11,6 +11,7 @@ export interface User {
   avatar_url: string | null;
   created_at: string;
   updated_at: string;
+  credit: number;
 }
 
 export interface CurrentUser {
@@ -26,4 +27,5 @@ export interface CurrentUser {
   avatar_url: string | null;
   created_at: string;
   updated_at: string;
+  credit: number;
 }

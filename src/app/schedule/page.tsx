@@ -1,12 +1,12 @@
 import DashboardLayout from "@/core/layout/dashboard-layout";
 import CreateForm from "@/modules/schedule";
-import { GetCurrentUserProvider } from "@/core/providers/get-current-user-provider";
 import { AdSchedulesProvider } from "@/modules/schedule/providers/ad-schedules-provider";
 import { AdsProvider } from "@/modules/schedule/providers/ads-provider";
+import { AppProvider } from "@/core/providers/app-provider";
 
 export default function Page() {
   return (
-    <GetCurrentUserProvider>
+    <AppProvider>
       <DashboardLayout>
         <AdSchedulesProvider>
           <AdsProvider>
@@ -14,6 +14,6 @@ export default function Page() {
           </AdsProvider>
         </AdSchedulesProvider>
       </DashboardLayout>
-    </GetCurrentUserProvider>
+    </AppProvider>
   );
 }

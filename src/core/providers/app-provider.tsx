@@ -1,12 +1,15 @@
 "use client";
 
-// import { GetCurrentUserProvider } from "./get-current-user-provider";
+import { ApiKeyProvider } from "@/modules/settings/providers/api-key-provider";
+import { GetCurrentUserProvider } from "./get-current-user-provider";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-//   return <GetCurrentUserProvider>
-//     {children}
-//     </GetCurrentUserProvider>;
-      return <div>
-    {children}
-    </div>;
+  return (
+    <GetCurrentUserProvider>
+      <ApiKeyProvider>{children}</ApiKeyProvider>
+    </GetCurrentUserProvider>
+  );
+  //   return <div>
+  // {children}
+  // </div>;
 }

@@ -59,7 +59,7 @@ export default function CreateForm() {
         type: "images",
         description,
         theme,
-        platforms: [platform],
+        platforms: ["instagram"],
         reference_media: null,
       });
 
@@ -95,11 +95,11 @@ export default function CreateForm() {
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Miniatur Timothy"
+                placeholder="OverAds"
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm"
               />
             </label>
-
+{/* 
             <label className="col-span-12 md:col-span-6">
               <div className="mb-2 text-sm font-medium">Platform</div>
               <select
@@ -112,7 +112,7 @@ export default function CreateForm() {
                 <option value="instagram">Instagram</option>
                 <option value="tiktok">TikTok</option>
               </select>
-            </label>
+            </label> */}
           </div>
 
           {/* ROW 2 */}

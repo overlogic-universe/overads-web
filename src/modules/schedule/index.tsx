@@ -4,13 +4,12 @@ import "react-calendar/dist/Calendar.css";
 import {
   CalendarDays,
   Clock,
-  Plus,
-  Edit,
   Trash2,
   Globe,
   Instagram,
   Facebook,
   Eye,
+  Upload,
 } from "lucide-react";
 import CircularLoading from "@/core/components/ui/circular-loading";
 import { formatDate, formatTime } from "@/core/utils/date";
@@ -21,9 +20,11 @@ import { useAds } from "./providers/ads-provider";
 import { useState } from "react";
 import { AdSchedule } from "@/core/types/ad";
 import { AdResultModal } from "./components/ad-result-modal";
+import { useGetCurrentUser } from "@/core/providers/get-current-user-provider";
 
 export default function SchedulePage() {
   const { schedules, loading, error } = useAdSchedules();
+  const { user, loading: userLoading } = useGetCurrentUser();
   const { ads } = useAds();
 
   const adOptions = ads.map((ad) => ({
@@ -50,6 +51,21 @@ export default function SchedulePage() {
   const openPreview = (schedule: AdSchedule) => {
     setPreviewSchedule(schedule);
     setPreviewOpen(true);
+  };
+
+  const statusStyle = {
+    pending: {
+      bg: "bg-yellow-50",
+      text: "text-yellow-600",
+    },
+    processing: {
+      bg: "bg-blue-50",
+      text: "text-blue-600",
+    },
+    generated: {
+      bg: "bg-green-50",
+      text: "text-green-600",
+    },
   };
 
   return (
@@ -83,12 +99,19 @@ export default function SchedulePage() {
       <div className="flex gap-6">
         <div className="flex-1">
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-2xl font-semibold">Daftar Jadwal</h1>
+            <div>
+              <h1 className="text-2xl font-semibold">Daftar Jadwal</h1>
+              {!userLoading && user && (
+                <p className="text-sm font-semibold">
+                  Kredit Anda: {user.credit}
+                </p>
+              )}
+            </div>
             <button
               onClick={open}
               className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#6C64FF] px-4 py-2 text-white shadow-md hover:bg-[#5b52ff]"
             >
-              <Plus size={16} /> Buat Jadwal
+              <Upload size={16} /> Unggah Iklan
             </button>
           </div>
 
@@ -96,7 +119,9 @@ export default function SchedulePage() {
           {error && (
             <div className="py-6 text-center text-sm text-red-500">{error}</div>
           )}
-
+          {!loading && !error && schedules.length === 0 && (
+            <p className="text-center text-sm">Belum ada data</p>
+          )}
           {schedules.map((item) => (
             <div
               key={item.id}
@@ -112,7 +137,7 @@ export default function SchedulePage() {
                 <Clock size={16} />
                 <span>{formatTime(item.scheduled_at)} WIB</span>
               </div>
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <PlatformBadge platform={item.platform as any} />
               </div>
               <div className="col-span-3">
@@ -122,6 +147,12 @@ export default function SchedulePage() {
                 <p className="line-clamp-1 text-xs text-gray-500">
                   {item.ad?.description ?? "-"}
                 </p>
+              </div>
+
+              <div
+                className={`flex items-center justify-center rounded-xl p-1 text-sm ${statusStyle[item.generation?.status ?? "pending"].bg} ${statusStyle[item.generation?.status ?? "pending"].text}`}
+              >
+                <p>{item.generation?.status ?? "pending"}</p>
               </div>
 
               <div className="col-span-2 flex items-center justify-end gap-3">

@@ -16,8 +16,8 @@ export interface Generation {
   ads_id: number;
   type: string;
   prompt: string;
-//   status: "pending" | "success" | "failed";
-  status : string;
+  status: "pending" | "processing" | "generated";
+  // status : string;
   result_media: string | null;
   payload: any;
   created_at: string;
