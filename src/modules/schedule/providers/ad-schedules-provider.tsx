@@ -51,13 +51,13 @@ export const AdSchedulesProvider = ({
       try {
         const res = await getAdSchedules();
 
-        const sorted = [...res.data].sort(
-          (a, b) =>
-            new Date(a.scheduled_at).getTime() -
-            new Date(b.scheduled_at).getTime(),
-        );
+        // const sorted = [...res.data].sort(
+        //   (a, b) =>
+        //     new Date(a.scheduled_at).getTime() -
+        //     new Date(b.scheduled_at).getTime(),
+        // );
 
-        setSchedules(sorted);
+        setSchedules(res.data);
         setPagination(res);
       } catch (err: any) {
         if (!silent) {

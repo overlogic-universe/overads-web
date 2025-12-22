@@ -8,6 +8,60 @@ import { ModalInfo } from "@/core/components/modal/modal-info";
 import { useState } from "react";
 import { AppButton } from "@/core/components/ui/app-button";
 
+const buildPrompt = ({
+  title,
+  description,
+  theme,
+}: {
+  title: string;
+  description: string;
+  theme: string;
+}) => {
+  return `
+Commercial advertisement image for "${title}".
+
+${description}
+
+Ad layout:
+- Product as main focus
+- Brand name "${title}" shown clearly
+- Clean, bold, modern typography
+
+Style:
+${theme}
+
+Professional studio lighting, premium ad quality, sharp focus, 4K.
+No distorted text, clean composition.
+`.trim();
+};
+
+// const buildPrompt = ({
+//   title,
+//   description,
+//   theme,
+// }: {
+//   title: string;
+//   description: string;
+//   theme: string;
+// }) => {
+//   return `
+// Gambar iklan komersial untuk produk "${title}".
+
+// ${description}
+
+// Tata letak iklan:
+// - Produk sebagai fokus utama
+// - Nama brand "${title}" tampil jelas
+// - Tipografi modern, tebal, mudah dibaca
+
+// Gaya / Tema:
+// ${theme}
+
+// Pencahayaan studio profesional, kualitas iklan premium, detail tinggi, fokus tajam, 4K.
+// Tanpa teks terdistorsi, komposisi bersih.
+// `.trim();
+// };
+
 export default function CreateForm() {
   const {
     platform,
@@ -44,7 +98,7 @@ export default function CreateForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("")
+    console.log("");
 
     if (!title) {
       setModalSuccess(false);
@@ -53,11 +107,17 @@ export default function CreateForm() {
       return;
     }
 
+    const finalPrompt = buildPrompt({
+      title,
+      description,
+      theme,
+    });
+
     try {
       await submit({
         name: title,
         type: "images",
-        description,
+        description: finalPrompt,
         theme,
         platforms: ["instagram"],
         reference_media: null,
@@ -80,7 +140,10 @@ export default function CreateForm() {
       <ModalLoading isOpen={loading} />
       <ModalInfo
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          window.location.reload();
+          setModalOpen(false);
+        }}
         isSuccess={modalSuccess}
         message={modalMessage}
       />
@@ -99,7 +162,7 @@ export default function CreateForm() {
                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm"
               />
             </label>
-{/* 
+            {/* 
             <label className="col-span-12 md:col-span-6">
               <div className="mb-2 text-sm font-medium">Platform</div>
               <select
@@ -124,6 +187,7 @@ export default function CreateForm() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Masukan deskripsi di sini"
                 rows={8}
+                maxLength={3200}
                 className="w-full resize-none rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm"
               />
             </label>
@@ -229,7 +293,7 @@ export default function CreateForm() {
             )}
           </div>
         </div>
-        <AppButton type="submit" text="Buat Iklan" className="mt-5 w-full!"/>
+        <AppButton type="submit" text="Buat Iklan" className="mt-5 w-full!" />
       </form>
     </>
   );

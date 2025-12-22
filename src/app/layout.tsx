@@ -23,12 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunito.variable} antialiased`}>
-        <AppProvider>
           <BasePage>
             <Navbar />
             {children}
           </BasePage>
-        </AppProvider>
       </body>
     </html>
   );
