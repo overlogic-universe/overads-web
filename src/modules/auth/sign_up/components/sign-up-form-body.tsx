@@ -86,14 +86,19 @@ export default function SignUpFormBody() {
 
     setLoading(true);
     try {
-      const res = await api.post(`/register`, {
-        body: JSON.stringify({
-          full_name: form.full_name,
-          business_name: form.business_name,
-          phone: normalizedPhone,
-          email: form.email,
-          password: form.password,
-        }),
+      console.log("body regist: ", {
+        full_name: form.full_name,
+        business_name: form.business_name,
+        phone: normalizedPhone,
+        email: form.email,
+        password: form.password,
+      });
+      const res = await api.post("/register", {
+        full_name: form.full_name,
+        business_name: form.business_name,
+        phone: normalizedPhone,
+        email: form.email,
+        password: form.password,
       });
 
       const raw = await res.data;
@@ -227,7 +232,7 @@ export default function SignUpFormBody() {
 
       <AppInput
         label="Password"
-        hint="Minimal 8 karakter"
+        hint="Minimal 6 karakter"
         isPassword={true}
         value={form.password}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
