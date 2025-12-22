@@ -1,8 +1,5 @@
-"use client";
-
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
-import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -53,7 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
     ? "w-full h-full rounded-none"
     : "w-full max-w-md rounded-2xl bg-white shadow-xl";
 
-  return createPortal(
+  return (
     <div
       className="animate-fadeIn fixed inset-0 z-9999 flex items-center justify-center bg-black/40"
       onClick={() => {
@@ -76,21 +73,6 @@ export const Modal: React.FC<ModalProps> = ({
 
         <div className="p-6">{children}</div>
       </div>
-
-      {/* Animations */}
-      <style>{`
-        @keyframes fadeIn {
-          0% { opacity: 0 }
-          100% { opacity: 1 }
-        }
-        @keyframes scaleIn {
-          0% { opacity: 0; transform: scale(0.95); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        .animate-fadeIn { animation: fadeIn .2s ease-out; }
-        .animate-scaleIn { animation: scaleIn .2s ease-out; }
-      `}</style>
-    </div>,
-    document.body,
+    </div>
   );
 };
