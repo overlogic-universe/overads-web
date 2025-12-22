@@ -18,6 +18,7 @@ export interface Generation {
   prompt: string;
   status: "pending" | "processing" | "generated" | "failed" | "uploaded";
   // status : string;
+  caption:string | null;
   result_media: string | null;
   payload: any;
   created_at: string;

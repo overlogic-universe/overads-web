@@ -6,6 +6,7 @@ import { AdSchedule } from "@/core/types/ad";
 import { useInstagramAccount } from "@/modules/account/providers/instagram-account-provider";
 import { Bookmark, Heart, MessageCircle, Send } from "lucide-react";
 import Image from "next/image";
+import Caption from "./caption";
 
 interface AdResultModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const AdResultModal = ({
 
   const { ad } = selectedSchedule;
   const status = selectedSchedule.generation?.status;
+  const caption = selectedSchedule.generation?.caption;
   const isFailed = status === "failed";
   const isPending = status === "pending" || status === "processing";
 
@@ -63,38 +65,25 @@ export const AdResultModal = ({
             <div></div>
           </div>
           <div className="flex flex-1 flex-col justify-between space-y-5">
-            {loading && <CircularLoading />}
-            {!loading && !error && account && (
-              <div className="flex items-center space-x-2">
-                <Image
-                  height={60}
-                  width={60}
-                  alt={`${account.name}-generated-image`}
-                  src={
-                    account.profile_picture_url ?? "/images/example-preview.png"
-                  }
-                  className="h-14 w-14 rounded-full object-cover"
-                />
-                <Title text={account.name ?? "-"} />
-              </div>
-            )}
-            <p>
-              🐼✨ EXCLUSIVE OFFER – ACTION FIGURE PANDA! ✨🐼 💥 Hadir dalam
-              battle mode paling epik! Si Panda siap menggetarkan rak koleksi
-              Anda — dengan detail armor, ekspresi berani, dan pose pertarungan
-              yang membuatnya tampak hidup. Bukan sekadar figur, tapi simbol
-              kekuatan dan ketenangan dalam satu tubuh. 💸 Harga turun dari
-              $4.99 ➜ kini hanya $1.49 per meal! ⚡ Save big, act now! Promo ini
-              eksklusif & terbatas waktu, jadi jangan tunggu sampai panda-nya
-              menghilang dari arena! ⭐ Didesain untuk kolektor sejati dan
-              pecinta gaya dinamis. ⭐ Cocok untuk hadiah, pajangan, atau
-              inspirasi di meja kerja Anda. ⭐ Tambahan efek kilau dan kemasan
-              premium membuatnya tampil memukau di setiap sudut foto! 📦 Klik
-              link di bio sebelum stoknya jadi legenda. Karena legenda... tak
-              pernah datang dua kali. 🥋🐼 #ActionFigure #ExclusiveOffer
-              #PandaWarrior #SaveBigActNow #CollectorsItem #LimitedEdition
-              #ToyPhotography #BattleMode #PandaPower #EpicDeal
-            </p>
+            <div className="space-y-3">
+              {loading && <CircularLoading />}
+              {!loading && !error && account && (
+                <div className="flex items-center space-x-2">
+                  <Image
+                    height={60}
+                    width={60}
+                    alt={`${account.name}-generated-image`}
+                    src={
+                      account.profile_picture_url ??
+                      "/images/example-preview.png"
+                    }
+                    className="h-14 w-14 rounded-full object-cover"
+                  />
+                  <Title text={account.name ?? "-"} />
+                </div>
+              )}
+              <Caption caption={caption ?? ""} />
+            </div>
             <div className="flex w-full items-center justify-between">
               <div className="flex space-x-2">
                 <Heart />
