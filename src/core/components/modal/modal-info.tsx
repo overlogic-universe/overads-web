@@ -18,7 +18,7 @@ export const ModalInfo: React.FC<ModalInfoProps> = ({
   const imageUrl = isSuccess ? "/svgs/success.svg" : "/svgs/failed.svg";
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} className="z-50!">
       <div className="relative mx-auto flex max-w-sm flex-col items-center justify-center space-y-4 px-4 py-6 text-center">
         {/* SVG via Image */}
         <img

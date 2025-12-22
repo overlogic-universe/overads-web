@@ -50,13 +50,13 @@ export const ScheduleAdModal = ({
     const scheduledAtWIB = toWIBISOString(scheduleAt);
 
     try {
+      onClose();
       await mutate(selectedAdId, {
         scheduled_at: scheduledAtWIB,
       });
       setInfoMessage("Berhasil menambahkan jadwal iklan");
       setInfoSuccess(true);
       setInfoOpen(true);
-      onClose();
     } catch (err: any) {
       setInfoMessage(err?.message || "Gagal menjadwalkan iklan");
       setInfoSuccess(false);

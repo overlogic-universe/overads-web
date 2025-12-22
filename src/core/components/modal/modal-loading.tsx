@@ -11,7 +11,7 @@ export const ModalLoading: React.FC<ModalLoadingProps> = ({ isOpen }) => {
       isOpen={isOpen}
       onClose={() => {}}
       showCloseButton={false}
-      className="w-auto! px-10"
+      className="w-auto! px-10 z-99999999!"
     >
       <div className="flex flex-col items-center justify-center py-6">
         <CircularLoading size="xl" />
