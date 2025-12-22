@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import { createPortal } from "react-dom";
