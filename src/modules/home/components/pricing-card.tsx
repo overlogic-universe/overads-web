@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { cn } from "@/core/lib/utils";
 
 interface Props {
   onBuy: () => void;
@@ -56,42 +57,50 @@ const PricingCard: React.FC<Props> = ({
       </div>
 
       {/* Price */}
-      <div className="mb-4">
-        <div
-          className={`text-3xl font-extrabold ${
-            highlight ? "text-white" : "text-gray-900"
-          }`}
-        >
-          {priceBig}
-        </div>
-        <div
-          className={`mt-1 text-sm ${
-            highlight ? "text-white/80" : "text-gray-500"
-          }`}
-        >
-          / bulan
-        </div>
+      <div
+        className={`text-3xl font-extrabold ${
+          highlight ? "text-white" : "text-gray-900"
+        }`}
+      >
+        {priceBig}
       </div>
+      <div
+        className={`mt-1 text-sm ${
+          highlight ? "text-white/80" : "text-gray-500"
+        }`}
+      ></div>
 
+      <h1
+        className={cn(
+          "text-end text-2xl font-black",
+          highlight ? "text-white text-shadow-white" : "text-green-400",
+        )}
+      >
+        + {points[0]} Kredit
+      </h1>
       {/* Features */}
-      <ul
+      {/* <ul
         className={`mb-6 space-y-3 ${
           highlight ? "text-white/90" : "text-gray-700"
         }`}
       >
         {points.map((p, i) => (
           <li key={i} className="flex items-center gap-3">
-            <span
-              className={`mt-1 text-sm ${
-                highlight ? "text-white" : "text-green-400"
-              }`}
-            >
-              ✔
-            </span>
-            <span className="text-sm leading-snug">{p}</span>
+            {i === 0 && (
+              <>
+                <span
+                  className={`mt-1 text-sm ${
+                    highlight ? "text-white" : "text-green-400"
+                  }`}
+                >
+                  ✔
+                </span>
+                <span className="text-sm leading-snug">{p}</span>
+              </>
+            )}
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       {/* CTA Button (Link) */}
       <div className="mt-auto pt-6">

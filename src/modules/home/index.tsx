@@ -55,7 +55,7 @@ export const Home = () => {
               konten iklan secara efisien
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-1 items-start gap-4 rounded-2xl border border-white p-4 md:grid-cols-3">
+          <div className="mt-12 grid w-[90%] m-auto grid-cols-1 items-start gap-4 rounded-2xl border border-white p-4 md:grid-cols-3">
             {data.map((item) => (
               <PricingCard
                 key={item.id}
