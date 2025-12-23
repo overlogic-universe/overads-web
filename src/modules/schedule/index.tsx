@@ -22,11 +22,15 @@ import { AdSchedule } from "@/core/types/ad";
 import { AdResultModal } from "./components/ad-result-modal";
 import { useGetCurrentUser } from "@/core/providers/get-current-user-provider";
 import { useAutoRefreshAdSchedules } from "./hooks/use-auth-refresh";
+import { cn } from "@/core/lib/utils";
+import { ModalInfo } from "@/core/components/modal/modal-info";
 
 export default function SchedulePage() {
   const { schedules, loading, error } = useAdSchedules();
   const { user, loading: userLoading } = useGetCurrentUser();
   const { ads } = useAds();
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoMessage, setInfoMessage] = useState("");
 
   useAutoRefreshAdSchedules(5000);
 
@@ -54,6 +58,18 @@ export default function SchedulePage() {
   const openPreview = (schedule: AdSchedule) => {
     setPreviewSchedule(schedule);
     setPreviewOpen(true);
+  };
+
+  const handleUploadClick = () => {
+    if (!userLoading && user && user.credit <= 0) {
+      setInfoMessage(
+        "Kredit Anda tidak mencukupi.<br/>Silakan beli kredit terlebih dahulu.",
+      );
+      setInfoOpen(true);
+      return;
+    }
+
+    open(); // buka ScheduleAdModal kalau kredit cukup
   };
 
   const statusStyle = {
@@ -89,6 +105,13 @@ export default function SchedulePage() {
         backgroundPosition: "left top",
       }}
     >
+      <ModalInfo
+        isOpen={infoOpen}
+        onClose={() => setInfoOpen(false)}
+        isSuccess={false}
+        message={infoMessage}
+      />
+
       {/* Modal create schedule */}
       <ScheduleAdModal
         isOpen={isOpen}
@@ -119,17 +142,21 @@ export default function SchedulePage() {
               )}
             </div>
             <button
-              onClick={open}
-              className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#6C64FF] px-4 py-2 text-white shadow-md hover:bg-[#5b52ff]"
+              onClick={handleUploadClick}
+              disabled={loading || userLoading}
+              className={cn(
+                "flex items-center gap-2 rounded-xl bg-[#6C64FF] px-4 py-2 text-white shadow-md",
+                loading || userLoading
+                  ? "cursor-not-allowed hover:bg-[#6C64FF]"
+                  : "cursor-pointer hover:bg-[#5b52ff]",
+              )}
             >
               <Upload size={16} /> Unggah Iklan
             </button>
           </div>
 
           {loading && <CircularLoading />}
-          {error && (
-            <div className="py-6 text-center text-sm text-red-500">{error}</div>
-          )}
+          {error && <p className="text-center text-sm">Belum ada data</p>}
           {!loading && !error && schedules.length === 0 && (
             <p className="text-center text-sm">Belum ada data</p>
           )}

@@ -5,12 +5,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ModalLoading } from "@/core/components/modal/modal-loading";
 import { useApiKeyContext } from "./providers/api-key-provider";
+import { ModalInfo } from "@/core/components/modal/modal-info";
 
 export default function SettingsPage() {
   const { apiKey, igId, loading, updateApiKey, updating } = useApiKeyContext();
 
   const [instagramId, setInstagramId] = useState("");
   const [token, setToken] = useState("");
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoSuccess, setInfoSuccess] = useState(false);
+  const [infoMessage, setInfoMessage] = useState("");
 
   // isi default value saat data dari API sudah ada
   useEffect(() => {
@@ -19,15 +23,33 @@ export default function SettingsPage() {
   }, [igId, apiKey]);
 
   const handleSubmit = async () => {
-    await updateApiKey({
-      igId: instagramId,
-      apiKey: token,
-    });
+    try {
+      await updateApiKey({
+        igId: instagramId,
+        apiKey: token,
+      });
+
+      setInfoSuccess(true);
+      setInfoMessage("Akun Meta berhasil terhubung.");
+      setInfoOpen(true);
+    } catch (error) {
+      setInfoSuccess(false);
+      setInfoMessage(
+        "Gagal menghubungkan akun Meta.<br/>Pastikan ID dan Token sudah benar.",
+      );
+      setInfoOpen(true);
+    }
   };
 
   return (
     <div className="flex min-h-screen bg-white font-sans">
       <ModalLoading isOpen={loading || updating} />
+      <ModalInfo
+        isOpen={infoOpen}
+        onClose={() => setInfoOpen(false)}
+        isSuccess={infoSuccess}
+        message={infoMessage}
+      />
       <main className="flex-1 p-12">
         <div className="max-w-3xl">
           <h2 className="mb-6 text-3xl font-bold text-gray-800">
@@ -83,7 +105,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col">
                   <label className="mb-2 text-xs text-gray-500">Token</label>
                   <input
-                    type="text"
+                    type="password"
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
                     placeholder="Masukkan Token Anda..."
